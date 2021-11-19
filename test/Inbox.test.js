@@ -16,7 +16,7 @@ beforeEach( async () => {
     accounts = await web3.eth.getAccounts()
 
     // One account to deploy contract
-    console.log({ interface, bytecode })
+    // console.log({ interface, bytecode })
     inboxInstance = await new web3.eth.Contract(JSON.parse(interface)) // Instance of Contract
         .deploy({ data: bytecode, arguments: ['Ethereum'] })
         .send({ from: accounts[0], gas: '1000000' })
@@ -24,8 +24,21 @@ beforeEach( async () => {
 })
 
 describe('Inbox', () => {
-    it('deploy a contract', () => {
-        console.log(inboxInstance)
+    it('deploy a contract, address already exist', () => {
+        assert.ok(inboxInstance.options.address)
+    })
+
+    it('initial message exist', async () => {
+        const message = await inboxInstance.methods.message().call()
+        assert.equal(message, 'Ethereum')
+    })
+
+    it('set a new message', async () => {
+        await inboxInstance.methods.setMessage('Blockchain').send({ from: accounts[0] })
+        const message = await inboxInstance.methods.message().call();
+
+        assert.equal(message, 'Blockchain');
+
     })
 })
 
