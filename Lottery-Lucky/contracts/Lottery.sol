@@ -9,7 +9,7 @@ contract Lottery {
     }
     
     function attend() public payable { // someone call this function mind send amout of ether
-        require(msg.value > .01 ether);
+        require(msg.value > 0.01 ether);
     
         members.push(msg.sender);
     }
@@ -29,7 +29,7 @@ contract Lottery {
         _;
     }
     
-    function allMembers() public view returns (address[]) {
+    function allMembers() public view strictAdmin returns (address[]) {
         return members;
     }
 }
