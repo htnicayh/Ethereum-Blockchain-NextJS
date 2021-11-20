@@ -14,9 +14,11 @@ const deploy = async () => {
     const accounts = await web3.eth.getAccounts();
 
     console.log('account to deploy contract', accounts[0])
-    const results =  await new web3.eth.Contract(JSON.parse(interface))
-        .deploy({ data: bytecode, arguments: ['Ethereum'] })
-        .send({ gas: '1000000', gasPrice: '1000000008', from: accounts[0] })
+    console.log('gas price: ', await web3.eth.getGasPrice())
+    console.log(interface)
+    const results = await new web3.eth.Contract(JSON.parse(interface))
+        .deploy({ data: bytecode })
+        .send({ gas: '1000000', gasPrice: '1000000008', from: accounts[0] });
 
     console.log('contract deployed to address ', results.options.address); // Not enough ether to deploy
 }
