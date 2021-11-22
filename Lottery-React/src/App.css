@@ -27,3 +27,8 @@
     color: whitesmoke;
     transition: all .25s ease-in-out;
 }
+
+.form-message {
+    color: red;
+    font-size: 1.1rem;
+}

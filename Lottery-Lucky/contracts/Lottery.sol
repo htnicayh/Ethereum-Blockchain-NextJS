@@ -29,7 +29,7 @@ contract Lottery {
         _;
     }
     
-    function allMembers() public view strictAdmin returns (address[]) {
+    function allMembers() public view returns (address[]) {
         return members;
     }
 }
