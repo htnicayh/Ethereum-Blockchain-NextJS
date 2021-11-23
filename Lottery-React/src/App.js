@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 import web3 from './web3'
 import lottery from "./lottery";
+import initContract, { CLASS_BTN } from './Constant'
+import SideDrawer from "./Sidedrawer";
+import Button from './Button'
 import './App.css'
-
-const initContract = {
-  address: '',
-  members: [],
-  balance: ''
-}
 
 const App = () => {
   const [contract, setContract] = useState(initContract)
   const [ether, setEther] = useState('')
   const [message, setMessage] = useState(null)
+  const [toggle, setToggle] = useState(false)
 
   const { address, members, balance } = contract
 
@@ -30,6 +28,7 @@ const App = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setEther('')
 
     const accounts = await web3.eth.getAccounts();
 
@@ -43,15 +42,90 @@ const App = () => {
     setMessage('Attend Ether Successfully !')
   }
 
+  const handleRandom = async () => {
+    const accounts = await web3.eth.getAccounts();
+
+    setMessage('Waiting on transaction success...');
+
+    await lottery.methods.luckyLottery().send({
+      from: accounts[0]
+    });
+
+    setMessage('A winner has been picked!' );
+  }
+
+  const handleToggle = () => {
+    setToggle((prevState) => {
+      return !prevState
+    })
+  }
+
   return (
     <div className="App">
+      {
+        toggle ? (
+          <div>
+            <SideDrawer toggle={handleToggle} />
+            <div 
+              style={
+                {
+                  transform: toggle ? 'translate(-50%, -50%)': 'translate(-50%, -500%)',
+                  zIndex: '10',
+                  width: '35rem',
+                  backgroundColor: 'whitesmoke',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.26)',
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  transition: 'transform 1s',
+                }
+              }
+            >
+              <div style={{ 
+                margin: '0 auto', 
+                textAlign: 'center', 
+                padding: '1rem 2rem'}}
+              >
+                <div 
+                  style={{ 
+                    fontSize: '1.3rem', 
+                    textAlign: 'center', 
+                    fontWeight: 'bold', 
+                    cursor: 'pointer', 
+                    padding: '0 0.3rem', 
+                    width: '1rem', 
+                    marginLeft: '30rem', 
+                    border: '1px solid black'
+                  }}
+                  onClick={handleToggle}
+                >
+                    X
+                </div>
+                <ul className='app-ul'>
+                    <p className='app-para'>
+                      List Members
+                    </p>
+                  {members.map((member, index) => {
+                    return (
+                      <li className='app-li' key={index}>{index}. {member}</li>
+                    )
+                  })}
+                </ul>
+              </div>
+            </div> 
+          </div>
+        ) : null
+      }
       <h1 className='title'>Lottery Contract</h1>
       <p>This contract is managed by {address}</p>
       <p>There are currently {members.length} people attend, competing to win {web3.utils.fromWei(balance, 'ether')} ether !</p>
       <h3>List address members</h3>
-      <ul>
-        
-      </ul>
+      <Button 
+        classBtn={CLASS_BTN}
+        handle={handleToggle}
+      >
+        Members Attend
+      </Button>
 
       <hr />
 
@@ -74,8 +148,20 @@ const App = () => {
             }}
           />
         </div>
-        <button className='form-button'>Attend</button>
+        <Button classBtn={CLASS_BTN}>Attend</Button>
       </form>
+
+      <hr /> 
+
+      <div>
+        <h2>Random A Winner ?</h2>
+        <Button 
+          classBtn={CLASS_BTN}
+          handle={handleRandom}
+        >
+          Random
+        </Button>
+      </div>
     </div>
   );
 };

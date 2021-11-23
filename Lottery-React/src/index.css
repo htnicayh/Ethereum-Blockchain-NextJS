@@ -18,4 +18,5 @@ code {
   font-family: 'Jost', sans-serif;
   margin-top: 2rem;
   text-align: center;
+  z-index: 0;
 }
